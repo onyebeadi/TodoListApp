@@ -23,7 +23,7 @@ function  main_menu(){
 
 function lists_menu(){
     $list_view = true;
-    $listObj = new list_menu();
+    $listObj = new TodoList();
     do{
         $listObj->print_list();
         $listObj->print_list_menu();
@@ -31,40 +31,27 @@ function lists_menu(){
 
         switch ($choice) {
             case "C":
-                $listObj->create_list();
-                break;
             case "c":
                 $listObj->create_list();
                 break;
             case "D":
-                $listObj->delete_list();
-                break;
             case "d":
                 $listObj->delete_list();
                 break;
             case "E":
-                $listObj->edit_list_name();
-                break;
             case "e":
                 $listObj->edit_list_name();
                 break;
             case "P":
-                $listObj->pin_unpin_list();
-                break;
             case "p":
                 $listObj->pin_unpin_list();
                 break;
             case "R":
-                $list_view = false;
-                echo "Thank you... exiting list menu\n";
-                break;
             case "r":
                 $list_view = false;
                 echo "Thank you... exiting list menu\n";
                 break;
             case "V":
-                $listObj->view_list_items();
-                break;
             case "v":
                 $listObj->view_list_items();
                 break;
@@ -97,9 +84,6 @@ do{
             lists_menu();
             break;
         case "q":
-            echo"Thank you, shutting down...\n";
-            exit();
-            break;
         case "Q":
             echo"Thank you, shutting down...\n";
             exit();

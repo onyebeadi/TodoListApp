@@ -8,14 +8,19 @@
 
 include_once"controller.php";
 
-class list_menu extends controller{
+class TodoList{
     public $menu_option="";
+    private $obj;
+
+    public function __construct(){
+        $this->obj = new Controller;
+    }
 
 
     public function print_list(){
         echo "\e[1;31;40m\n       All your lists\n\e[1;32;40m";
         echo "*********************************************\n\n";
-        $lists = $this->load_file("list_titles");
+        $lists = $this->obj->load_file("list_titles");
         if(is_array($lists) && !empty($lists)){
             foreach($lists as $key => $values){
                 echo "[" . ($key + 1) . "]  (" . date('d/m/Y H:i', $values['time']) . ") " . $values['title'] . "\n";
@@ -45,14 +50,14 @@ class list_menu extends controller{
             if($content_entered === 0){
             echo "\e[1;31;40m\nCancelling Addition of List \e[1;32;40m\n";
         }else{
-            $this->store_and_reload("list_titles", $data = ['title' => $content_entered, 'time' => time(), 'pinned' => false]);
+            $this->obj->store_and_reload("list_titles", $data = ['title' => $content_entered, 'time' => time(), 'pinned' => false]);
             echo "\e[1;31;40m list added \e[1;32;40m \n";
         }
 
     }
 
     public function edit_list_name(){
-        $file_data = $this->load_file("list_titles");
+        $file_data = $this->obj->load_file("list_titles");
 
         echo "\e[1;31;40m Entering edit mode;
               \n type the id you wish to edit \e[1;32;40m \n";
@@ -67,7 +72,7 @@ class list_menu extends controller{
                 $new_list_name = trim(fgets(STDIN));
                 $oldData = $file_data[$index];
                 $oldData['title'] = $new_list_name;
-                $this->update_at($file_name,$index,$oldData);
+                $this->obj->update_at($file_name,$index,$oldData);
             }else{
                 echo "\e[1;31;40m list not found \e[1;32;40m\n";
             }
@@ -78,7 +83,7 @@ class list_menu extends controller{
     }
 
     public function pin_unpin_list(){
-        $file_data = $this->load_file("list_titles");
+        $file_data = $this->obj->load_file("list_titles");
         echo "\e[1;31;40m Entering pinning mode;
               \n type id you wish to pin: \e[1;32;40m\n";
         $content_entered = trim(fgets(STDIN));
@@ -89,7 +94,7 @@ class list_menu extends controller{
             if(array_key_exists($index,$file_data)){
                 $oldData = $file_data[$index];
                 $oldData['pinned'] = !$oldData['pinned'];
-                $this->update_at($file_name,$index,$oldData);
+                $this->obj->update_at($file_name,$index,$oldData);
 
                 echo "\e[1;31;40m list un/pinned \e[1;32;40m \n";
             }else{
@@ -101,7 +106,7 @@ class list_menu extends controller{
     }
 
     public function delete_list(){
-        $file_data = $this->load_file("list_titles");
+        $file_data = $this->obj->load_file("list_titles");
         echo "\e[1;31;40m Entering delete mode;
              \n type the id you wish to delete: \e[1;32;40m\n";
         $content_entered = trim(fgets(STDIN));
@@ -110,7 +115,7 @@ class list_menu extends controller{
             $index = ((int)$content_entered - 1);
             $file_name = "list_titles";
             if(array_key_exists($index,$file_data)){
-                $this->delete_from($file_name,$index);
+                $this->obj->delete_from($file_name,$index);
                 echo "\e[1;31;40m list deleted \e[1;32;40m\n";
             }else {
                 echo "\e[1;31;40m list not found \e[1;32;40m \n";
@@ -122,7 +127,7 @@ class list_menu extends controller{
     }
 
     public function view_list_items(){
-        $file_data = $this->load_file("list_titles");
+        $file_data = $this->obj->load_file("list_titles");
         echo "\e[1;31;40m\n Enter id of a list to view items within.\e[1;32;40m \n";
         $content_entered = trim(fgets(STDIN));
 
@@ -131,7 +136,7 @@ class list_menu extends controller{
 
             if(array_key_exists($index,$file_data)){
                 include_once'listitemsmenu.php';
-                $itemsObj = new list_items();
+                $itemsObj = new TodoListItems();
                 $listing_view=true;
                 do{
                     $itemsObj->print_list_items($file_data,$index);
@@ -139,24 +144,19 @@ class list_menu extends controller{
                     $op = $itemsObj->options;
                     switch ($op) {
                         case "A":
-                            $itemsObj->add_to_list($file_data, $index);
-                            break;
                         case "a":
                             $itemsObj->add_to_list($file_data, $index);            ;
                             break;
                         case "D":
-                            $itemsObj->delete_list_item($file_data,$index);
-                            break;
                         case "d":
                             $itemsObj->delete_list_item($file_data,$index);
                             break;
                         case "E":
-                            $itemsObj->edit_list_items($file_data,$index);
-                            break;
                         case "e":
                             $itemsObj->edit_list_items($file_data,$index);
                             break;
                         case "R":
+                        case "r":
                             $listing_view = false;
                             break;
                         default:

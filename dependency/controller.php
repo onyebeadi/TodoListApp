@@ -5,7 +5,7 @@
  * Date: 08/04/2020
  * Time: 00:17
  */
-class controller{
+class Controller{
     public function load_file($file_name){
         $load_from = "store/".$file_name.".txt";
         if(file_exists($load_from)){
